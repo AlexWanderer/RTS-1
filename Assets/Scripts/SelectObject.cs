@@ -3,20 +3,22 @@ using System.Collections;
 
 public class SelectObject : MonoBehaviour {
 	public bool selected;
+	Vector3 startScale = Vector3.zero;
 //	SelectionManager selector;
 
 	// Use this for initialization
 	void Start () {
 		selected = false;
-//		selector = GameObject.Find("PlayerGameManager").GetComponent<SelectionManager>();
+		//		selector = GameObject.Find("PlayerGameManager").GetComponent<SelectionManager>();
+		startScale = transform.localScale;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (selected) {
-			transform.localScale = Vector3.one * (0.3f * Mathf.Sin(Time.time * 5) + 1);
+			transform.localScale = startScale * (0.3f * Mathf.Sin(Time.time * 5) + 1);
 		} else {
-			transform.localScale = Vector3.one;
+			transform.localScale = startScale;
 		}
 
 	}

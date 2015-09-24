@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MoveSelected : MonoBehaviour {
+public class MovementManager : MonoBehaviour {
 	SelectionManager selectionManager;
 
 	void Start () {

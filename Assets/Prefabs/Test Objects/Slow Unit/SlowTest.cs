@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class SlowTest : MonoBehaviour {
-	public float speed = 1;
+	public float speed = 10;
 	bool moving = false;
 	Vector3 target = Vector3.zero;
+	Vector3 startPos = Vector3.zero;
 	float dist = 0f;
 	float tTime = 0f;
 	float startTime = 0f;
@@ -19,8 +21,8 @@ public class SlowTest : MonoBehaviour {
 
 
 	void Update () {
-		if (moving) {	// TODO: Make slow movement actually linear.
-			transform.position = Vector3.Lerp(transform.position, target, (Time.time - startTime) / tTime);
+		if (moving) {
+			transform.position = Vector3.Lerp(startPos, target, (Time.time - startTime) / tTime);
 			if ((Time.time - startTime) / tTime >= 1f)
 				moving = false;
 		}
@@ -31,13 +33,16 @@ public class SlowTest : MonoBehaviour {
 		moving = true;
 		if (selectionManager.selectedUnits.Count == 1)
 			target = newPos;
-		else
-			target = newPos + (Quaternion.AngleAxis((360f / selectionManager.selectedUnits.Count) *
-				selectionManager.selectedUnits.IndexOf(gameObject), Vector3.up) * Vector3.forward * (selectionManager.selectedUnits.Count / 2));
-		// Evenly distribute units around target
-
+		else {
+			int count = selectionManager.selectedUnits.Count(u => u.GetComponent<SlowTest>() != null);
+			target = newPos + (Quaternion.AngleAxis((360f / count) *
+				selectionManager.selectedUnits.Where(u => u.GetComponent<SlowTest>() != null).ToList().IndexOf(gameObject), Vector3.up) *
+				Vector3.forward * (count / 2));
+		}
+		
 		dist = Vector3.Distance(transform.position, target);
 		tTime = dist / speed;
-		startTime = Time.deltaTime;
+		startTime = Time.time;
+		startPos = transform.position;
 	}
 }
