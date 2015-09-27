@@ -4,8 +4,9 @@ using System.Collections;
 public class MovementManager : MonoBehaviour {
 	SelectionManager selectionManager;
 
+
 	void Start () {
-		selectionManager = GameObject.Find("PlayerGameManager").GetComponent<SelectionManager>();
+		selectionManager = GetComponent<SelectionManager>();
 
 	}
 
@@ -19,15 +20,25 @@ public class MovementManager : MonoBehaviour {
 
 			bool success = false;
 			foreach(RaycastHit hit in hits) {
-				if (hit.transform.tag == "NavMesh") {
+				if (hit.transform.tag == "Ground") {
 					targetPos = hit.point;
 					success = true;
 				}
 			}
 			
 			if (success) {
-				foreach (GameObject unit in selectionManager.selectedUnits) {
-					unit.SendMessage("Move", targetPos, SendMessageOptions.DontRequireReceiver);
+				foreach (UnitObject unit in selectionManager.selectedUnits) {
+					unit.GameObject.SendMessage("Move", targetPos, SendMessageOptions.DontRequireReceiver);
+				}
+			}
+		}
+	}
+
+	void OnGUI () {
+		if (true) {
+			if (GUI.Button(new Rect(110, 20, 100, 20), "Cancel Move")) {
+				foreach (UnitObject unit in selectionManager.selectedUnits) {
+					unit.GameObject.SendMessage("Stop", SendMessageOptions.DontRequireReceiver);
 				}
 			}
 		}

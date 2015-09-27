@@ -11,15 +11,16 @@ public class SelectionManager : MonoBehaviour {
 	/// <summary>
 	/// All units currently selected.
 	/// </summary>
-	public List<GameObject> selectedUnits = new List<GameObject>();
+	public List<UnitObject> selectedUnits = new List<UnitObject>();
 
 	/// <summary>
 	/// All units the player can interact with.
 	/// </summary>
-	public List<GameObject> allFriendlyUnits = new List<GameObject>();
+	public List<UnitObject> allFriendlyUnits = new List<UnitObject>();
 	Vector3 firstClickPos = Vector2.zero;   // Why is mouse position a Vector3??
 	Rect selectionBox = new Rect(0, 0, 0, 0);
 	Rect GuiSelectionBox = new Rect(0, 0, 0, 0);
+
 
 	void Start () {
 		if (cam == null)
@@ -51,6 +52,7 @@ public class SelectionManager : MonoBehaviour {
 				SingleSelect();
 			}
 		}
+
 	}
 
 
@@ -60,8 +62,8 @@ public class SelectionManager : MonoBehaviour {
 	/// <param name="box">Rectto make selection within.</param>
 	public void BoxSelect (Rect box) {
 		// TODO: Make better marquee selection
-		foreach (GameObject unit in allFriendlyUnits) {
-			if (box.Contains(cam.WorldToScreenPoint(unit.transform.position))) {
+		foreach (UnitObject unit in allFriendlyUnits) {
+			if (box.Contains(cam.WorldToScreenPoint(unit.GameObject.transform.position))) {
 				SelectUnit(unit);
             }
 		}
@@ -77,8 +79,9 @@ public class SelectionManager : MonoBehaviour {
 
 		ray = cam.ScreenPointToRay(Input.mousePosition);
 		if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
-			if (allFriendlyUnits.Contains(hit.transform.gameObject))
-				SelectUnit(hit.transform.gameObject, true);	// true makes it toggle select
+			var matchingUnit = allFriendlyUnits.FirstOrDefault(u => u.GameObject == hit.transform.gameObject);
+            if (matchingUnit != null)
+				SelectUnit(matchingUnit, true);	// true makes it toggle select
 		}
 	}
 
@@ -87,8 +90,8 @@ public class SelectionManager : MonoBehaviour {
 	/// Removes all units from the selection.
 	/// </summary>
 	public void ClearSelectedUnits () {
-		foreach (GameObject unit in selectedUnits) {
-			unit.SendMessage("Deselect", SendMessageOptions.DontRequireReceiver);
+		foreach (UnitObject unit in selectedUnits) {
+			unit.GameObject.SendMessage("Deselect", SendMessageOptions.DontRequireReceiver);
 		}
 		selectedUnits.Clear();
 	}
@@ -99,9 +102,9 @@ public class SelectionManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="unit">Unit to be selected.</param>
 	/// <param name="toggle">Set to true to toggle selection state.</param>
-	public void SelectUnit (GameObject unit, bool toggle = false) {
+	public void SelectUnit (UnitObject unit, bool toggle = false) {
 		if (!selectedUnits.Contains(unit)) {
-			unit.SendMessage("Select", SendMessageOptions.DontRequireReceiver);
+			unit.GameObject.SendMessage("Select", SendMessageOptions.DontRequireReceiver);
 			selectedUnits.Add(unit);
 		} else if (toggle) {
 			DeselectUnit(unit);
@@ -113,8 +116,8 @@ public class SelectionManager : MonoBehaviour {
 	/// Removes a unit from the selection.
 	/// </summary>
 	/// <param name="unit">Unit to be deselected.</param>
-	public void DeselectUnit (GameObject unit) {
-		unit.SendMessage("Deselect", SendMessageOptions.DontRequireReceiver);
+	public void DeselectUnit (UnitObject unit) {
+		unit.GameObject.SendMessage("Deselect", SendMessageOptions.DontRequireReceiver);
 		selectedUnits.Remove(unit);
 	}
 
@@ -123,21 +126,26 @@ public class SelectionManager : MonoBehaviour {
 	/// Adds a unit to the list of active friendly units.  
 	/// </summary>
 	/// <param name="unit">Unit to be added.</param>
-	public void RegisterUnit (GameObject unit) {
+	public void RegisterUnit (UnitObject unit) {
 		if (allFriendlyUnits.Contains(unit))
 			return;
 		allFriendlyUnits.Add(unit);
+
 	}
 
-	
+
 	/// <summary>
 	/// Removes a unit from the list of active friendly units.  This should only happen if it dies.
 	/// </summary>
 	/// <param name="unit">Unit to be removed.</param>
-	public void UnregisterUnit (GameObject unit) {
+	public void UnregisterUnit (UnitObject unit) {
 		if (!allFriendlyUnits.Contains(unit))
 			return;
 		allFriendlyUnits.Remove(unit);
+//		var types = allFriendlyUnits.Select(t => t.Type).Distinct();
+		// TODO: move this
+
+
 	}
 
 	void OnGUI () {
