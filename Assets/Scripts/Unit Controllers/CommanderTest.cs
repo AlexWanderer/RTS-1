@@ -24,7 +24,7 @@ public class CommanderTest : MonoBehaviour {
 		// NOTE: I have no idea why 1.4 works.  It's 2 * 0.7, but I don't know why 70% is special.
 	}
 
-
+	
 	void Update () {
 
 		if (state == UnitState.Spawn) {
@@ -62,6 +62,7 @@ public class CommanderTest : MonoBehaviour {
 	public void PlaceBeacon (Vector3 spawnPos) {
 		GameObject newBeacon = Instantiate(dropBeacon, spawnPos, Quaternion.identity) as GameObject;
 		newBeacon.transform.GetChild(0).gameObject.SetActive(true);
+		newBeacon.SendMessage("Setup", 5f, SendMessageOptions.DontRequireReceiver);
 		UnitObject newUnit = new UnitObject(spawnType, 1, newBeacon, Time.time + 5f);
 		spawnQueueManager.spawnQueue.Add(newUnit);
 	}

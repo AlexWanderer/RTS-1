@@ -17,13 +17,13 @@ public class SpawnQueueManager : MonoBehaviour {
 	}
 	
 	void Update () {
-		foreach (UnitObject unit in spawnQueue) {
-			if (unit.Age > 0f) {
-				if (unit.Type == UnitClass.Fast)
-					unit.Spawn(fastUnit);
-				else if (unit.Type == UnitClass.Slow)
-					unit.Spawn(slowUnit);
-			}
+		foreach (UnitObject unit in spawnQueue.Where(u => u.Age > 0f)) {
+			if (unit.Type == UnitClass.Fast)
+				unit.Spawn(fastUnit);
+			else if (unit.Type == UnitClass.Slow)
+				unit.Spawn(slowUnit);
+			else
+				Debug.LogWarning("wtf");
 		}
 		spawnQueue.RemoveAll(u => u.Spawned == true);
 	}

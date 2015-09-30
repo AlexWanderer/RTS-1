@@ -41,7 +41,7 @@ public class UnitObject{
 	public void Spawn (GameObject prefab) {
 		this.GameObject = GameObject.Instantiate(prefab, this.Beacon.transform.position - (Vector3.up * 0.5f) +
 			(Vector3.up * prefab.transform.localScale.y * 0.5f), Quaternion.identity) as GameObject;
-		GameObject.Destroy(this.Beacon);
+		GameObject.Destroy(this.Beacon.gameObject);
 		this.Beacon = null;
 		this.Spawned = true;
 	}

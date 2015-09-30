@@ -2,18 +2,25 @@
 using System.Collections;
 
 public class SwarmAgent : MonoBehaviour {
+	public GameObject impactEffect;
 	public int movingPriority = 45;
 	int staticPriority = 40;
-	bool moving = false;
+	public bool moving = false;
 	float moveCommandTime = 0f;
+	public bool falling = true;
+	public float fallHeight = 100;
+	float fallenDist = 0;
+	public float fallVel = -5;
 	NavMeshAgent navAgent;
 
 	void Start () {
-
 		navAgent = GetComponent<NavMeshAgent>();
+		navAgent.enabled = false;
 		staticPriority = navAgent.avoidancePriority;
-
+		transform.position += Vector3.up * fallHeight;
+		fallenDist = 0f;
 		moving = false;
+		falling = true;
 	}
 
 	void Update () {
@@ -22,6 +29,21 @@ public class SwarmAgent : MonoBehaviour {
 				moving = false;
 				navAgent.avoidancePriority = staticPriority;
 				navAgent.Stop();
+			}
+		}
+
+		if (falling) {
+			if (fallenDist >= fallHeight)
+				falling = false;
+			else {
+				transform.position += Vector3.up * fallVel * Time.deltaTime;
+				fallenDist -= fallVel * Time.deltaTime;
+            }
+			//called after on the ground
+			if (!falling) {
+				transform.position += Vector3.up * (fallenDist - fallHeight);
+				navAgent.enabled = true;
+				Destroy(Instantiate(impactEffect, transform.position, impactEffect.transform.rotation), 2f);
 			}
 		}
 	}

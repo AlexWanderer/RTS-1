@@ -15,6 +15,7 @@ public class CameraMove : MonoBehaviour {
 	float rotationVelocity = 0f;
 	Vector3 velocity = Vector3.zero;
 	Vector3 centerScreen = Vector3.zero;
+	Rect fullScreenRect = new Rect(0, 0, Screen.width, Screen.height);
 
 	void Start () {
 		velocity = Vector3.zero;
@@ -27,7 +28,7 @@ public class CameraMove : MonoBehaviour {
 	void Update () {
 		if ((((Mathf.Abs(Input.mousePosition.x - centerScreen.x) > centerScreen.x - 10) && !Input.GetMouseButton(2)) ||
 			(Mathf.Abs(Input.mousePosition.y - centerScreen.y) > centerScreen.y - 10)) &&
-            !Input.GetMouseButton(0)) {
+            !Input.GetMouseButton(0) && fullScreenRect.Contains(Input.mousePosition)) {
 
 			velocity += (Input.mousePosition - centerScreen).normalized * acceleration * Time.deltaTime;
 			velocity *= friction;

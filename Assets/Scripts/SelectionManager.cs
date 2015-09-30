@@ -17,7 +17,7 @@ public class SelectionManager : MonoBehaviour {
 	/// All units the player can interact with.
 	/// </summary>
 	public List<UnitObject> allFriendlyUnits = new List<UnitObject>();
-	Vector3 firstClickPos = Vector2.zero;   // Why is mouse position a Vector3??
+	Vector3 firstClickPos = Vector2.zero;   // Why is mouse position a Vector3?!?
 	Rect selectionBox = new Rect(0, 0, 0, 0);
 	Rect GuiSelectionBox = new Rect(0, 0, 0, 0);
 
@@ -59,7 +59,7 @@ public class SelectionManager : MonoBehaviour {
 	/// <summary>
 	/// Makes a marquee selection in screen space.
 	/// </summary>
-	/// <param name="box">Rectto make selection within.</param>
+	/// <param name="box">Rect to make selection within.</param>
 	public void BoxSelect (Rect box) {
 		// TODO: Make better marquee selection
 		foreach (UnitObject unit in allFriendlyUnits) {
@@ -130,7 +130,6 @@ public class SelectionManager : MonoBehaviour {
 		if (allFriendlyUnits.Contains(unit))
 			return;
 		allFriendlyUnits.Add(unit);
-
 	}
 
 

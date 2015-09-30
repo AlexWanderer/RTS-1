@@ -35,8 +35,13 @@ public class MovementManager : MonoBehaviour {
 	}
 
 	void OnGUI () {
-		if (true) {
-			if (GUI.Button(new Rect(110, 20, 100, 20), "Cancel Move")) {
+		bool somethingMoving = false;
+		foreach (UnitObject unit in selectionManager.selectedUnits) {
+			if (unit.GameObject.GetComponent<SwarmAgent>().moving)
+				somethingMoving = true;
+		}
+		if (somethingMoving) {
+			if (GUI.Button(new Rect(130, 20, 100, 20), "Cancel Move")) {
 				foreach (UnitObject unit in selectionManager.selectedUnits) {
 					unit.GameObject.SendMessage("Stop", SendMessageOptions.DontRequireReceiver);
 				}
